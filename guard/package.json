@@ -1,0 +1,57 @@
+{
+  "name": "@retrysafe/guard",
+  "version": "0.0.0",
+  "description": "Run webhook and queue handlers exactly once per event: transactional Postgres/Prisma claims, Redis leases, and provider event-id helpers.",
+  "keywords": [
+    "idempotency",
+    "webhooks",
+    "exactly-once",
+    "deduplication",
+    "stripe",
+    "postgres",
+    "prisma",
+    "redis",
+    "bullmq"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sammy440/retrysafe.git"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "sql",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/pg": "^8.23.1",
+    "ioredis": "^5.11.1",
+    "ioredis-mock": "8",
+    "pg": "^8.23.1",
+    "tsup": "^9.0.0",
+    "typescript": "~5.9.0",
+    "vitest": "^5.0.5"
+  }
+}
