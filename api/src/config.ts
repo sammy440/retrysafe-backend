@@ -23,7 +23,7 @@ const int = (v: string | undefined, d: number) => (v && /^\d+$/.test(v) ? Number
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
   return {
     port: int(env.PORT, 8787),
-    allowedOrigins: (env.ALLOWED_ORIGINS ?? "http://localhost:3000").split(",").map((s) => s.trim()).filter(Boolean),
+    allowedOrigins: (env.ALLOWED_ORIGINS ?? "https://retrysafe-frontend.vercel.app,http://localhost:3000").split(",").map((s) => s.trim()).filter(Boolean),
     trustProxy: env.TRUST_PROXY === "true" || env.TRUST_PROXY === "1",
     limits: {
       maxFiles: int(env.MAX_FILES, 25),

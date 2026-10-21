@@ -8,5 +8,8 @@
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
     "dev": "pnpm --filter @retrysafe/api dev"
+  },
+  "dependencies": {
+    "retrysafe": "^0.1.0"
   }
 }
