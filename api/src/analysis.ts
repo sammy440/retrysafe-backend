@@ -1,5 +1,5 @@
 import { InMemoryFileSystemHost, Project, ts } from "ts-morph";
-import { analyze, type AnalysisResult, type Confidence } from "@retrysafe/core";
+import { analyze, type AnalysisResult, type Confidence } from "retrysafe/core";
 
 export interface AnalyzeRequest {
   /** Project-relative path -> contents. Source files, plus optional tsconfig.json, package.json, *.prisma, *.sql. */

@@ -3,7 +3,7 @@ import { bodyLimit } from "hono/body-limit";
 import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
 import { z } from "zod";
-import { RULES } from "@retrysafe/core";
+import { RULES } from "retrysafe/core";
 import type { ApiConfig } from "./config";
 import { RateLimiter } from "./rate-limit";
 import { AnalysisRunner, BusyError, TimeoutError } from "./runner";

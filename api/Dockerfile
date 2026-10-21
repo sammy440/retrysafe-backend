@@ -1,14 +1,18 @@
-# Build the bundle first (pnpm --filter @retrysafe/api build): dist/ already contains @retrysafe/core.
-FROM node:22-slim
+# Self-contained: build with this directory as the context (Railway: Root Directory = /api).
+FROM node:22-slim AS build
+WORKDIR /app
+COPY package.json package-lock.json* ./
+RUN npm install --no-audit --no-fund
+COPY tsconfig.json tsup.config.ts ./
+COPY src ./src
+RUN npm run build && npm prune --omit=dev
 
+FROM node:22-slim
 WORKDIR /app
 ENV NODE_ENV=production
-
-# Only the runtime npm dependencies the bundle leaves external.
-RUN npm install --omit=dev --no-audit --no-fund ts-morph@28 zod@4 picomatch@4 hono@4 @hono/node-server@2
-
-COPY dist ./dist
-
+COPY --from=build /app/package.json ./
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
 USER node
 EXPOSE 8787
 CMD ["node", "dist/server.js"]

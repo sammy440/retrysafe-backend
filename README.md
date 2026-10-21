@@ -44,7 +44,7 @@ Errors are `{ error: { code, message, details? } }` with codes `invalid_json`, `
 | Variable | Default | |
 |---|---|---|
 | `PORT` | `8787` | |
-| `ALLOWED_ORIGINS` | `http://localhost:3000` | Comma-separated; `*` allows any |
+| `ALLOWED_ORIGINS` | `https://retrysafe-frontend.vercel.app,http://localhost:3000` | Comma-separated; `*` allows any |
 | `TRUST_PROXY` | `false` | Use `X-Forwarded-For` for client IPs (behind a load balancer) |
 | `MAX_FILES` / `MAX_FILE_BYTES` / `MAX_TOTAL_BYTES` | `25` / `100000` / `400000` | |
 | `ANALYSIS_TIMEOUT_MS` | `15000` | |
@@ -53,8 +53,18 @@ Errors are `{ error: { code, message, details? } }` with codes `invalid_json`, `
 
 ### Deploying
 
+The API depends on the published [`retrysafe`](https://www.npmjs.com/package/retrysafe) package
+(`retrysafe/core`), so `api/` builds on its own; `guard/` is not involved.
+
+**Railway:** New Project → Deploy from GitHub repo → this repo. In the service's Settings set
+**Root Directory** to `/api`; Railway then uses `api/Dockerfile` and `api/railway.json` (health check on
+`/health`). Add the variables `TRUST_PROXY=true` and, if the site is not the default,
+`ALLOWED_ORIGINS`. Railway provides `PORT`. Generate a public domain under Settings → Networking, and
+set it as `NEXT_PUBLIC_RETRYSAFE_API_URL` in the frontend's Vercel project.
+
+**Any Docker host:**
+
 ```sh
-pnpm --filter @retrysafe/api build    # bundles @retrysafe/core into api/dist
-docker build -t retrysafe-api api     # see api/Dockerfile
-docker run -p 8787:8787 -e ALLOWED_ORIGINS=https://your-site.example -e TRUST_PROXY=true retrysafe-api
+docker build -t retrysafe-api api     # the api directory is the whole build context
+docker run -p 8787:8787 -e TRUST_PROXY=true retrysafe-api
 ```

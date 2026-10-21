@@ -6,6 +6,4 @@ export default defineConfig({
   target: "node20",
   platform: "node",
   clean: true,
-  // @retrysafe/core is workspace source; bundle it. Its npm deps stay external.
-  noExternal: ["@retrysafe/core"],
 });

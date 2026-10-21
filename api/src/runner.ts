@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { Worker } from "node:worker_threads";
-import type { AnalysisResult } from "@retrysafe/core";
+import type { AnalysisResult } from "retrysafe/core";
 import type { AnalyzeRequest } from "./analysis";
 
 export class BusyError extends Error {}
