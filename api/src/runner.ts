@@ -7,17 +7,12 @@ import type { AnalyzeRequest } from "./analysis";
 export class BusyError extends Error {}
 export class TimeoutError extends Error {}
 
-/** The worker entry: dist/worker.js when built, src/worker.ts (through tsx) in development and tests. */
 function workerEntry(): { url: URL; execArgv: string[] } {
   const js = new URL("./worker.js", import.meta.url);
   if (existsSync(fileURLToPath(js))) return { url: js, execArgv: [] };
   return { url: new URL("./worker.ts", import.meta.url), execArgv: ["--import", "tsx"] };
 }
 
-/**
- * Runs each analysis in its own worker thread with a wall-clock timeout, so a pathological input cannot
- * block the server, and caps how many run at once.
- */
 export class AnalysisRunner {
   private running = 0;
   constructor(

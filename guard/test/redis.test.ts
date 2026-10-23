@@ -4,7 +4,6 @@ import { redisGuard } from "../src";
 
 const ioredis = () => new RedisMock() as unknown as import("ioredis").default;
 
-/** node-redis v4 shaped client over the same mock: set(key, value, { NX, EX }). */
 function nodeRedis() {
   const r = new RedisMock();
   return {
@@ -15,7 +14,6 @@ function nodeRedis() {
   };
 }
 
-/** @upstash/redis shaped client: lowercase options, a `json` command group, no connection status. */
 function upstash() {
   const r = new RedisMock();
   return {
@@ -26,7 +24,6 @@ function upstash() {
   };
 }
 
-// ioredis-mock instances share one keyspace, so each flavor gets its own prefix.
 describe.each([
   ["ioredis", ioredis],
   ["node-redis", nodeRedis],
@@ -35,7 +32,6 @@ describe.each([
   const redisGuardFor = (r: never, o: Parameters<typeof redisGuard>[1] = {}) => redisGuard(r, { prefix: `${name}:`, ...o });
   it("detects the client flavor", async () => {
     const client = make() as never;
-    // Wrong flavor would drop NX: the second claim would then succeed.
     const guard = redisGuardFor(client);
     let release!: () => void;
     const first = guard.run("flavor", () => new Promise<void>((r) => (release = r)));
@@ -74,7 +70,6 @@ describe("redisGuard leases", () => {
   it("an abandoned claim (process died mid-work) expires instead of losing the event", async () => {
     const redis = ioredis();
     const guard = redisGuard(redis, { leaseSeconds: 1, prefix: "lease:" });
-    // Simulate a crashed delivery: the lease was taken and never completed or released.
     await redis.set("lease:evt_4", "pending", "EX", 1, "NX");
     expect(await guard.run("evt_4", () => "x")).toEqual({ status: "in-progress" });
     await new Promise((r) => setTimeout(r, 1100));

@@ -1,8 +1,3 @@
-/**
- * A tiny Postgres stand-in with the semantics the guard depends on: transactions, a unique key on the
- * processed-events table, and the row lock that makes a concurrent insert of the same key wait for the
- * first transaction to commit (then conflict) or roll back (then succeed).
- */
 interface Tx {
   claims: Set<string>;
   writes: string[];
@@ -17,7 +12,6 @@ export class FakePg {
   private locks = new Map<string, Tx>();
 
   connect = async () => new FakeClient(this);
-  /** Autocommit query, like pg.Pool#query. */
   query = (text: string, values?: unknown[]) => new FakeClient(this).query(text, values);
 
   async claim(tx: Tx | undefined, key: string): Promise<number> {
@@ -69,7 +63,6 @@ export class FakeClient {
     if (/retrysafe_processed_events|processed/i.test(text) && /^INSERT/.test(sql)) {
       return { rowCount: await this.db.claim(this.tx, String(values[0])), rows: [] };
     }
-    // Any other statement is "the handler's write".
     if (this.tx) this.tx.writes.push(`${text} ${JSON.stringify(values)}`);
     else this.db.committedWrites.push(`${text} ${JSON.stringify(values)}`);
     return { rowCount: 1, rows: [] };
@@ -80,7 +73,6 @@ export class FakeClient {
   }
 }
 
-/** A PrismaClient-shaped wrapper over the same engine: interactive transactions and $executeRawUnsafe. */
 export function fakePrisma(db: FakePg) {
   return {
     queries: [] as string[],

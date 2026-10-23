@@ -1,19 +1,13 @@
-/** Runtime configuration, from the environment. Defaults suit local development. */
 export interface ApiConfig {
   port: number;
-  /** Origins allowed to call the API from a browser. "*" allows any. */
   allowedOrigins: string[];
-  /** Trust X-Forwarded-For for client IPs (behind a proxy or platform load balancer). */
   trustProxy: boolean;
   limits: {
     maxFiles: number;
     maxFileBytes: number;
     maxTotalBytes: number;
-    /** Wall-clock budget for one analysis; the worker is terminated after it. */
     timeoutMs: number;
-    /** Analyses running at once; further requests get 503. */
     maxConcurrent: number;
-    /** Requests per client per minute. */
     ratePerMinute: number;
   };
 }

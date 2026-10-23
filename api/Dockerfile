@@ -1,4 +1,3 @@
-# Self-contained: build with this directory as the context (Railway: Root Directory = /api).
 FROM node:22-slim AS build
 WORKDIR /app
 COPY package.json package-lock.json* ./

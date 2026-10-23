@@ -1,4 +1,3 @@
-/** Fixed-window request counter per client key, in memory (one instance; use a shared store when scaling out). */
 export class RateLimiter {
   private windows = new Map<string, { start: number; count: number }>();
 
@@ -8,7 +7,6 @@ export class RateLimiter {
     private readonly now: () => number = Date.now,
   ) {}
 
-  /** Records a request; returns seconds to wait when over the limit, or 0 when allowed. */
   hit(key: string): number {
     const t = this.now();
     const w = this.windows.get(key);

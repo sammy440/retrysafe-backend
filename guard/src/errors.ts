@@ -1,4 +1,3 @@
-/** The delivery carries no stable event id, so it cannot be deduplicated safely. */
 export class MissingEventIdError extends Error {
   constructor(what: string) {
     super(`@retrysafe/guard: no event id found (${what}). Refusing to guess: a generated key would make every retry look new.`);

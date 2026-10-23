@@ -2,17 +2,12 @@ import { InMemoryFileSystemHost, Project, ts } from "ts-morph";
 import { analyze, type AnalysisResult, type Confidence } from "retrysafe/core";
 
 export interface AnalyzeRequest {
-  /** Project-relative path -> contents. Source files, plus optional tsconfig.json, package.json, *.prisma, *.sql. */
   files: Record<string, string>;
   options?: { minConfidence?: Confidence; maxCallDepth?: number; serverActions?: boolean };
 }
 
 const SOURCE = /\.(ts|tsx|mts|cts|js|jsx|mjs|cjs)$/;
 
-/**
- * Static analysis of submitted files, entirely in memory. Nothing is executed and nothing touches the
- * real file system: the TypeScript compiler only parses and type-checks the given text.
- */
 export function analyzeFiles(req: AnalyzeRequest): AnalysisResult {
   const fs = new InMemoryFileSystemHost();
   for (const [file, text] of Object.entries(req.files)) fs.writeFileSync(`/${file}`, text);
@@ -29,7 +24,6 @@ export function analyzeFiles(req: AnalyzeRequest): AnalysisResult {
   let project: Project;
   if (req.files["tsconfig.json"]) {
     project = new Project({ fileSystem: fs, tsConfigFilePath: "/tsconfig.json", compilerOptions: { allowJs: true } });
-    // A tsconfig whose include misses the submitted files would analyze nothing.
     if (project.getSourceFiles().filter((s) => !s.isDeclarationFile()).length === 0) {
       project.addSourceFilesAtPaths(Object.keys(req.files).filter((f) => SOURCE.test(f)).map((f) => `/${f}`));
     }

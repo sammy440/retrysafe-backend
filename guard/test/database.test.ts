@@ -92,7 +92,6 @@ describe("prismaGuard", () => {
   });
 });
 
-// Real Postgres, when available: DATABASE_URL=postgres://... pnpm test
 describe.skipIf(!process.env.DATABASE_URL)("postgresGuard against a real database", () => {
   it("exactly once under concurrency, with rollback on failure", async () => {
     const { default: pg } = await import("pg");

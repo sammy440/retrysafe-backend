@@ -1,10 +1,6 @@
 import { assertKey } from "./errors";
 import type { Guard, GuardOptions, OnceResult } from "./types";
 
-/**
- * In-process guard for tests and single-instance development. State is lost on restart and not shared
- * between processes, so it is not a production guard.
- */
 export function memoryGuard(opts: GuardOptions = {}): Guard<void> & { clear(): void } {
   const done = new Set<string>();
   const running = new Set<string>();

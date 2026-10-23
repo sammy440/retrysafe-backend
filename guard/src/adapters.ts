@@ -1,28 +1,16 @@
 import type { Guard, OnceResult } from "./types";
 
 export interface ResponseStatuses {
-  /** Status for a duplicate delivery (default 200: tell the provider it is done). */
   duplicate?: number;
-  /** Status while another delivery holds the lease (default 409: retryable, so the provider tries again later). */
   inProgress?: number;
 }
 
-/** Minimal Express-compatible response. */
 interface ResLike {
   headersSent?: boolean;
   status(code: number): ResLike;
   end(body?: unknown): unknown;
 }
 
-/**
- * Wrap an Express/Connect handler. `getKey` derives the event key (after your signature verification
- * middleware has run); the handler gets the guard's transaction client as its third argument.
- *
- * ```ts
- * app.post("/webhooks/stripe", express.raw({ type: "application/json" }), verifyStripe,
- *   withGuard(guard, (req) => eventKey.stripe(req.event), async (req, res, tx) => { ...; res.sendStatus(200); }));
- * ```
- */
 export function withGuard<Req, Res extends ResLike, Tx>(
   guard: Guard<Tx>,
   getKey: (req: Req) => string | Promise<string>,
@@ -42,14 +30,6 @@ export function withGuard<Req, Res extends ResLike, Tx>(
   };
 }
 
-/**
- * Wrap a fetch-style route handler (Next.js App Router, Remix, Hono, Bun, Deno). `getKey` receives a
- * clone of the request, so the handler can still read the body.
- *
- * ```ts
- * export const POST = withGuardRoute(guard, async (req) => eventKey.github(req.headers), async (req, tx) => { ... });
- * ```
- */
 export function withGuardRoute<Tx>(
   guard: Guard<Tx>,
   getKey: (req: Request) => string | Promise<string>,
@@ -63,10 +43,6 @@ export function withGuardRoute<Tx>(
   };
 }
 
-/**
- * Wrap a queue processor (BullMQ, Bull, SQS consumers). A duplicate completes quietly; an in-progress
- * duplicate throws so the queue retries it later.
- */
 export function withGuardJob<Job, R, Tx>(
   guard: Guard<Tx>,
   getKey: (job: Job) => string,
